@@ -52,24 +52,19 @@ import java.util.ArrayList;
 /**
  * ListView subclass that mediates drag and drop resorting of items.
  * 
- * 
  * @author heycosmo
- *
  */
 public class DragSortListView extends ListView {
-    
-    
+
     /**
-     * The View that floats above the ListView and represents
-     * the dragged item.
+     * The View that floats above the ListView and represents the dragged item.
      */
     private View mFloatView;
 
     /**
-     * The float View location. First based on touch location
-     * and given deltaX and deltaY. Then restricted by callback
-     * to FloatViewManager.onDragFloatView(). Finally restricted
-     * by bounds of DSLV.
+     * The float View location. First based on touch location and given deltaX
+     * and deltaY. Then restricted by callback to
+     * FloatViewManager.onDragFloatView(). Finally restricted by bounds of DSLV.
      */
     private Point mFloatLoc = new Point();
 
@@ -86,34 +81,34 @@ public class DragSortListView extends ListView {
     private boolean mFloatViewOnMeasured = false;
 
     /**
-     * Watch the Adapter for data changes. Cancel a drag if
-     * coincident with a change.
-     */ 
+     * Watch the Adapter for data changes. Cancel a drag if coincident with a
+     * change.
+     */
     private DataSetObserver mObserver;
 
     /**
      * Transparency for the floating View (XML attribute).
      */
     private float mFloatAlpha = 1.0f;
+
     private float mCurrFloatAlpha = 1.0f;
 
     /**
-     * While drag-sorting, the current position of the floating
-     * View. If dropped, the dragged item will land in this position.
+     * While drag-sorting, the current position of the floating View. If
+     * dropped, the dragged item will land in this position.
      */
     private int mFloatPos;
 
     /**
-     * The first expanded ListView position that helps represent
-     * the drop slot tracking the floating View.
+     * The first expanded ListView position that helps represent the drop slot
+     * tracking the floating View.
      */
     private int mFirstExpPos;
 
     /**
-     * The second expanded ListView position that helps represent
-     * the drop slot tracking the floating View. This can equal
-     * mFirstExpPos if there is no slide shuffle occurring; otherwise
-     * it is equal to mFirstExpPos + 1.
+     * The second expanded ListView position that helps represent the drop slot
+     * tracking the floating View. This can equal mFirstExpPos if there is no
+     * slide shuffle occurring; otherwise it is equal to mFirstExpPos + 1.
      */
     private int mSecondExpPos;
 
@@ -128,46 +123,44 @@ public class DragSortListView extends ListView {
     private int mSrcPos;
 
     /**
-     * Offset (in x) within the dragged item at which the user
-     * picked it up (or first touched down with the digitalis).
+     * Offset (in x) within the dragged item at which the user picked it up (or
+     * first touched down with the digitalis).
      */
     private int mDragDeltaX;
 
     /**
-     * Offset (in y) within the dragged item at which the user
-     * picked it up (or first touched down with the digitalis).
+     * Offset (in y) within the dragged item at which the user picked it up (or
+     * first touched down with the digitalis).
      */
     private int mDragDeltaY;
 
-
     /**
-     * The difference (in x) between screen coordinates and coordinates
-     * in this view.
+     * The difference (in x) between screen coordinates and coordinates in this
+     * view.
      */
     private int mOffsetX;
 
     /**
-     * The difference (in y) between screen coordinates and coordinates
-     * in this view.
+     * The difference (in y) between screen coordinates and coordinates in this
+     * view.
      */
     private int mOffsetY;
 
     /**
-     * A listener that receives callbacks whenever the floating View
-     * hovers over a new position.
+     * A listener that receives callbacks whenever the floating View hovers over
+     * a new position.
      */
     private DragListener mDragListener;
 
     /**
-     * A listener that receives a callback when the floating View
-     * is dropped.
+     * A listener that receives a callback when the floating View is dropped.
      */
     private DropListener mDropListener;
 
     /**
-     * A listener that receives a callback when the floating View
-     * (or more precisely the originally dragged item) is removed
-     * by one of the provided gestures.
+     * A listener that receives a callback when the floating View (or more
+     * precisely the originally dragged item) is removed by one of the provided
+     * gestures.
      */
     private RemoveListener mRemoveListener;
 
@@ -182,23 +175,26 @@ public class DragSortListView extends ListView {
      * Drag state enum.
      */
     private final static int IDLE = 0;
+
     private final static int REMOVING = 1;
+
     private final static int DROPPING = 2;
+
     private final static int STOPPED = 3;
+
     private final static int DRAGGING = 4;
 
     private int mDragState = IDLE;
 
     /**
-     * Height in pixels to which the originally dragged item
-     * is collapsed during a drag-sort. Currently, this value
-     * must be greater than zero.
+     * Height in pixels to which the originally dragged item is collapsed during
+     * a drag-sort. Currently, this value must be greater than zero.
      */
     private int mItemHeightCollapsed = 1;
 
     /**
-     * Height of the floating View. Stored for the purpose of
-     * providing the tracking drop slot.
+     * Height of the floating View. Stored for the purpose of providing the
+     * tracking drop slot.
      */
     private int mFloatViewHeight;
 
@@ -213,8 +209,8 @@ public class DragSortListView extends ListView {
     private int mWidthMeasureSpec = 0;
 
     /**
-     * Sample Views ultimately used for calculating the height
-     * of ListView items that are off-screen.
+     * Sample Views ultimately used for calculating the height of ListView items
+     * that are off-screen.
      */
     private View[] mSampleViewTypes = new View[1];
 
@@ -224,16 +220,16 @@ public class DragSortListView extends ListView {
     private DragScroller mDragScroller;
 
     /**
-     * Determines the start of the upward drag-scroll region
-     * at the top of the ListView. Specified by a fraction
-     * of the ListView height, thus screen resolution agnostic.
+     * Determines the start of the upward drag-scroll region at the top of the
+     * ListView. Specified by a fraction of the ListView height, thus screen
+     * resolution agnostic.
      */
     private float mDragUpScrollStartFrac = 1.0f / 3.0f;
 
     /**
-     * Determines the start of the downward drag-scroll region
-     * at the bottom of the ListView. Specified by a fraction
-     * of the ListView height, thus screen resolution agnostic.
+     * Determines the start of the downward drag-scroll region at the bottom of
+     * the ListView. Specified by a fraction of the ListView height, thus screen
+     * resolution agnostic.
      */
     private float mDragDownScrollStartFrac = 1.0f / 3.0f;
 
@@ -241,8 +237,11 @@ public class DragSortListView extends ListView {
      * The following are calculated from the above fracs.
      */
     private int mUpScrollStartY;
+
     private int mDownScrollStartY;
+
     private float mDownScrollStartYF;
+
     private float mUpScrollStartYF;
 
     /**
@@ -256,16 +255,15 @@ public class DragSortListView extends ListView {
     private float mDragDownScrollHeight;
 
     /**
-     * Maximum drag-scroll speed in pixels per ms. Only used with
-     * default linear drag-scroll profile.
+     * Maximum drag-scroll speed in pixels per ms. Only used with default linear
+     * drag-scroll profile.
      */
     private float mMaxScrollSpeed = 0.5f;
 
     /**
-     * Defines the scroll speed during a drag-scroll. User can
-     * provide their own; this default is a simple linear profile
-     * where scroll speed increases linearly as the floating View
-     * nears the top/bottom of the ListView.
+     * Defines the scroll speed during a drag-scroll. User can provide their
+     * own; this default is a simple linear profile where scroll speed increases
+     * linearly as the floating View nears the top/bottom of the ListView.
      */
     private DragScrollProfile mScrollProfile = new DragScrollProfile() {
         @Override
@@ -300,42 +298,39 @@ public class DragSortListView extends ListView {
     private int mDragStartY;
 
     /**
-     * Drag flag bit. Floating View can move in the positive
-     * x direction.
+     * Drag flag bit. Floating View can move in the positive x direction.
      */
     public final static int DRAG_POS_X = 0x1;
 
     /**
-     * Drag flag bit. Floating View can move in the negative
-     * x direction.
+     * Drag flag bit. Floating View can move in the negative x direction.
      */
     public final static int DRAG_NEG_X = 0x2;
 
     /**
-     * Drag flag bit. Floating View can move in the positive
-     * y direction. This is subtle. What this actually means is
-     * that, if enabled, the floating View can be dragged below its starting
-     * position. Remove in favor of upper-bounding item position?
+     * Drag flag bit. Floating View can move in the positive y direction. This
+     * is subtle. What this actually means is that, if enabled, the floating
+     * View can be dragged below its starting position. Remove in favor of
+     * upper-bounding item position?
      */
     public final static int DRAG_POS_Y = 0x4;
 
     /**
-     * Drag flag bit. Floating View can move in the negative
-     * y direction. This is subtle. What this actually means is
-     * that the floating View can be dragged above its starting
-     * position. Remove in favor of lower-bounding item position?
+     * Drag flag bit. Floating View can move in the negative y direction. This
+     * is subtle. What this actually means is that the floating View can be
+     * dragged above its starting position. Remove in favor of lower-bounding
+     * item position?
      */
     public final static int DRAG_NEG_Y = 0x8;
 
     /**
-     * Flags that determine limits on the motion of the
-     * floating View. See flags above.
+     * Flags that determine limits on the motion of the floating View. See flags
+     * above.
      */
     private int mDragFlags = 0;
 
     /**
-     * Last call to an on*TouchEvent was a call to
-     * onInterceptTouchEvent.
+     * Last call to an on*TouchEvent was a call to onInterceptTouchEvent.
      */
     private boolean mLastCallWasIntercept = false;
 
@@ -350,45 +345,42 @@ public class DragSortListView extends ListView {
     private FloatViewManager mFloatViewManager = null;
 
     /**
-     * Given to ListView to cancel its action when a drag-sort
-     * begins.
+     * Given to ListView to cancel its action when a drag-sort begins.
      */
     private MotionEvent mCancelEvent;
 
     /**
-     * Enum telling where to cancel the ListView action when a
-     * drag-sort begins
+     * Enum telling where to cancel the ListView action when a drag-sort begins
      */
     private static final int NO_CANCEL = 0;
+
     private static final int ON_TOUCH_EVENT = 1;
+
     private static final int ON_INTERCEPT_TOUCH_EVENT = 2;
 
     /**
-     * Where to cancel the ListView action when a
-     * drag-sort begins
-     */ 
+     * Where to cancel the ListView action when a drag-sort begins
+     */
     private int mCancelMethod = NO_CANCEL;
 
     /**
-     * Determines when a slide shuffle animation starts. That is,
-     * defines how close to the edge of the drop slot the floating
-     * View must be to initiate the slide.
+     * Determines when a slide shuffle animation starts. That is, defines how
+     * close to the edge of the drop slot the floating View must be to initiate
+     * the slide.
      */
     private float mSlideRegionFrac = 0.25f;
 
     /**
-     * Number between 0 and 1 indicating the relative location of
-     * a sliding item (only used if drag-sort animations
-     * are turned on). Nearly 1 means the item is 
-     * at the top of the slide region (nearly full blank item
-     * is directly below).
+     * Number between 0 and 1 indicating the relative location of a sliding item
+     * (only used if drag-sort animations are turned on). Nearly 1 means the
+     * item is at the top of the slide region (nearly full blank item is
+     * directly below).
      */
     private float mSlideFrac = 0.0f;
 
     /**
-     * Wraps the user-provided ListAdapter. This is used to wrap each
-     * item View given by the user inside another View (currenly
-     * a RelativeLayout) which
+     * Wraps the user-provided ListAdapter. This is used to wrap each item View
+     * given by the user inside another View (currenly a RelativeLayout) which
      * expands and collapses to simulate the item shuffling.
      */
     private AdapterWrapper mAdapterWrapper;
@@ -409,24 +401,22 @@ public class DragSortListView extends ListView {
     private boolean mBlockLayoutRequests = false;
 
     /**
-     * Set to true when a down event happens during drag sort;
-     * for example, when drag finish animations are
-     * playing.
+     * Set to true when a down event happens during drag sort; for example, when
+     * drag finish animations are playing.
      */
     private boolean mIgnoreTouchEvent = false;
 
     /**
-     * Caches DragSortItemView child heights. Sometimes DSLV has to
-     * know the height of an offscreen item. Since ListView virtualizes
-     * these, DSLV must get the item from the ListAdapter to obtain
-     * its height. That process can be expensive, but often the same
-     * offscreen item will be requested many times in a row. Once an
-     * offscreen item height is calculated, we cache it in this guy.
-     * Actually, we cache the height of the child of the
-     * DragSortItemView since the item height changes often during a
-     * drag-sort.
+     * Caches DragSortItemView child heights. Sometimes DSLV has to know the
+     * height of an offscreen item. Since ListView virtualizes these, DSLV must
+     * get the item from the ListAdapter to obtain its height. That process can
+     * be expensive, but often the same offscreen item will be requested many
+     * times in a row. Once an offscreen item height is calculated, we cache it
+     * in this guy. Actually, we cache the height of the child of the
+     * DragSortItemView since the item height changes often during a drag-sort.
      */
     private static final int sCacheSize = 3;
+
     private HeightCache mChildHeightCache = new HeightCache(sCacheSize);
 
     private RemoveAnimator mRemoveAnimator;
@@ -436,6 +426,7 @@ public class DragSortListView extends ListView {
     private DropAnimator mDropAnimator;
 
     private boolean mUseRemoveVelocity;
+
     private float mRemoveVelocityX = 0;
 
     public DragSortListView(Context context, AttributeSet attrs) {
@@ -446,14 +437,13 @@ public class DragSortListView extends ListView {
         int dropAnimDuration = defaultDuration; // ms
 
         if (attrs != null) {
-            TypedArray a = getContext().obtainStyledAttributes(attrs,
-                    R.styleable.DragSortListView, 0, 0);
+            TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.DragSortListView,
+                    0, 0);
 
-            mItemHeightCollapsed = Math.max(1, a.getDimensionPixelSize(
-                    R.styleable.DragSortListView_collapsed_height, 1));
+            mItemHeightCollapsed = Math.max(1,
+                    a.getDimensionPixelSize(R.styleable.DragSortListView_collapsed_height, 1));
 
-            mTrackDragSort = a.getBoolean(
-                    R.styleable.DragSortListView_track_drag_sort, false);
+            mTrackDragSort = a.getBoolean(R.styleable.DragSortListView_track_drag_sort, false);
 
             if (mTrackDragSort) {
                 mDragSortTracker = new DragSortTracker();
@@ -465,67 +455,53 @@ public class DragSortListView extends ListView {
 
             mDragEnabled = a.getBoolean(R.styleable.DragSortListView_drag_enabled, mDragEnabled);
 
-            mSlideRegionFrac = Math.max(0.0f,
-                    Math.min(1.0f, 1.0f - a.getFloat(
-                            R.styleable.DragSortListView_slide_shuffle_speed,
-                            0.75f)));
+            mSlideRegionFrac = Math.max(0.0f, Math.min(1.0f,
+                    1.0f - a.getFloat(R.styleable.DragSortListView_slide_shuffle_speed, 0.75f)));
 
             mAnimate = mSlideRegionFrac > 0.0f;
 
-            float frac = a.getFloat(
-                    R.styleable.DragSortListView_drag_scroll_start,
+            float frac = a.getFloat(R.styleable.DragSortListView_drag_scroll_start,
                     mDragUpScrollStartFrac);
 
             setDragScrollStart(frac);
 
-            mMaxScrollSpeed = a.getFloat(
-                    R.styleable.DragSortListView_max_drag_scroll_speed,
+            mMaxScrollSpeed = a.getFloat(R.styleable.DragSortListView_max_drag_scroll_speed,
                     mMaxScrollSpeed);
 
-            removeAnimDuration = a.getInt(
-                    R.styleable.DragSortListView_remove_animation_duration,
+            removeAnimDuration = a.getInt(R.styleable.DragSortListView_remove_animation_duration,
                     removeAnimDuration);
 
-            dropAnimDuration = a.getInt(
-                    R.styleable.DragSortListView_drop_animation_duration,
+            dropAnimDuration = a.getInt(R.styleable.DragSortListView_drop_animation_duration,
                     dropAnimDuration);
 
-            boolean useDefault = a.getBoolean(
-                    R.styleable.DragSortListView_use_default_controller,
+            boolean useDefault = a.getBoolean(R.styleable.DragSortListView_use_default_controller,
                     true);
 
+            boolean longClickAnywhere = a.getBoolean(
+                    R.styleable.DragSortListView_long_click_anywhere, false);
+
             if (useDefault) {
-                boolean removeEnabled = a.getBoolean(
-                        R.styleable.DragSortListView_remove_enabled,
+                boolean removeEnabled = a.getBoolean(R.styleable.DragSortListView_remove_enabled,
                         false);
-                int removeMode = a.getInt(
-                        R.styleable.DragSortListView_remove_mode,
+                int removeMode = a.getInt(R.styleable.DragSortListView_remove_mode,
                         DragSortController.FLING_REMOVE);
-                boolean sortEnabled = a.getBoolean(
-                        R.styleable.DragSortListView_sort_enabled,
-                        true);
-                int dragInitMode = a.getInt(
-                        R.styleable.DragSortListView_drag_start_mode,
+                boolean sortEnabled = a.getBoolean(R.styleable.DragSortListView_sort_enabled, true);
+                int dragInitMode = a.getInt(R.styleable.DragSortListView_drag_start_mode,
                         DragSortController.ON_DOWN);
-                int dragHandleId = a.getResourceId(
-                        R.styleable.DragSortListView_drag_handle_id,
-                        0);
-                int flingHandleId = a.getResourceId(
-                        R.styleable.DragSortListView_fling_handle_id,
-                        0);
-                int clickRemoveId = a.getResourceId(
-                        R.styleable.DragSortListView_click_remove_id,
-                        0);
-                int bgColor = a.getColor(
-                        R.styleable.DragSortListView_float_background_color,
+                int dragHandleId = a.getResourceId(R.styleable.DragSortListView_drag_handle_id, 0);
+                int flingHandleId = a
+                        .getResourceId(R.styleable.DragSortListView_fling_handle_id, 0);
+                int clickRemoveId = a
+                        .getResourceId(R.styleable.DragSortListView_click_remove_id, 0);
+                int bgColor = a.getColor(R.styleable.DragSortListView_float_background_color,
                         Color.BLACK);
 
-                DragSortController controller = new DragSortController(
-                        this, dragHandleId, dragInitMode, removeMode,
-                        clickRemoveId, flingHandleId);
+                DragSortController controller = new DragSortController(this, dragHandleId,
+                        dragInitMode, removeMode, clickRemoveId, flingHandleId);
                 controller.setRemoveEnabled(removeEnabled);
                 controller.setSortEnabled(sortEnabled);
                 controller.setBackgroundColor(bgColor);
+                controller.setLongTouchDragAnywhere(longClickAnywhere);
 
                 mFloatViewManager = controller;
                 setOnTouchListener(controller);
@@ -569,9 +545,8 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Usually called from a FloatViewManager. The float alpha
-     * will be reset to the xml-defined value every time a drag
-     * is stopped.
+     * Usually called from a FloatViewManager. The float alpha will be reset to
+     * the xml-defined value every time a drag is stopped.
      */
     public void setFloatAlpha(float alpha) {
         mCurrFloatAlpha = alpha;
@@ -582,8 +557,8 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Set maximum drag scroll speed in positions/second. Only applies
-     * if using default ScrollSpeedProfile.
+     * Set maximum drag scroll speed in positions/second. Only applies if using
+     * default ScrollSpeedProfile.
      * 
      * @param max Maximum scroll speed.
      */
@@ -593,12 +568,10 @@ public class DragSortListView extends ListView {
 
     /**
      * For each DragSortListView Listener interface implemented by
-     * <code>adapter</code>, this method calls the appropriate
-     * set*Listener method with <code>adapter</code> as the argument.
+     * <code>adapter</code>, this method calls the appropriate set*Listener
+     * method with <code>adapter</code> as the argument.
      * 
-     * @param adapter The ListAdapter providing data to back
-     * DragSortListView.
-     *
+     * @param adapter The ListAdapter providing data to back DragSortListView.
      * @see android.widget.ListView#setAdapter(android.widget.ListAdapter)
      */
     @Override
@@ -608,13 +581,13 @@ public class DragSortListView extends ListView {
             adapter.registerDataSetObserver(mObserver);
 
             if (adapter instanceof DropListener) {
-                setDropListener((DropListener) adapter);
+                setDropListener((DropListener)adapter);
             }
             if (adapter instanceof DragListener) {
-                setDragListener((DragListener) adapter);
+                setDragListener((DragListener)adapter);
             }
             if (adapter instanceof RemoveListener) {
-                setRemoveListener((RemoveListener) adapter);
+                setRemoveListener((RemoveListener)adapter);
             }
         } else {
             mAdapterWrapper = null;
@@ -624,10 +597,10 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * As opposed to {@link ListView#getAdapter()}, which returns
-     * a heavily wrapped ListAdapter (DragSortListView wraps the
-     * input ListAdapter {\emph and} ListView wraps the wrapped one).
-     *
+     * As opposed to {@link ListView#getAdapter()}, which returns a heavily
+     * wrapped ListAdapter (DragSortListView wraps the input ListAdapter {\emph
+     * and} ListView wraps the wrapped one).
+     * 
      * @return The ListAdapter set as the argument of {@link setAdapter()}
      */
     public ListAdapter getInputAdapter() {
@@ -644,12 +617,14 @@ public class DragSortListView extends ListView {
         public AdapterWrapper(ListAdapter adapter) {
             super();
             mAdapter = adapter;
-            
+
             mAdapter.registerDataSetObserver(new DataSetObserver() {
+                @Override
                 public void onChanged() {
                     notifyDataSetChanged();
                 }
 
+                @Override
                 public void onInvalidated() {
                     notifyDataSetInvalidated();
                 }
@@ -684,7 +659,7 @@ public class DragSortListView extends ListView {
         public boolean isEnabled(int position) {
             return mAdapter.isEnabled(position);
         }
-        
+
         @Override
         public int getItemViewType(int position) {
             return mAdapter.getItemViewType(position);
@@ -694,17 +669,16 @@ public class DragSortListView extends ListView {
         public int getViewTypeCount() {
             return mAdapter.getViewTypeCount();
         }
-        
+
         @Override
         public boolean hasStableIds() {
             return mAdapter.hasStableIds();
         }
-        
+
         @Override
         public boolean isEmpty() {
             return mAdapter.isEmpty();
         }
-
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -714,7 +688,7 @@ public class DragSortListView extends ListView {
             // Log.d("mobeta",
             // "getView: position="+position+" convertView="+convertView);
             if (convertView != null) {
-                v = (DragSortItemView) convertView;
+                v = (DragSortItemView)convertView;
                 View oldChild = v.getChildAt(0);
 
                 child = mAdapter.getView(position, oldChild, DragSortListView.this);
@@ -733,8 +707,7 @@ public class DragSortListView extends ListView {
                 } else {
                     v = new DragSortItemView(getContext());
                 }
-                v.setLayoutParams(new AbsListView.LayoutParams(
-                        ViewGroup.LayoutParams.FILL_PARENT,
+                v.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT));
                 v.addView(child);
             }
@@ -754,8 +727,7 @@ public class DragSortListView extends ListView {
         // Log.d("mobeta", "div="+divider+" divH="+dividerHeight);
 
         if (divider != null && dividerHeight != 0) {
-            final ViewGroup expItem = (ViewGroup) getChildAt(expPosition
-                    - getFirstVisiblePosition());
+            final ViewGroup expItem = (ViewGroup)getChildAt(expPosition - getFirstVisiblePosition());
             if (expItem != null) {
                 final int l = getPaddingLeft();
                 final int r = getWidth() - getPaddingRight();
@@ -805,17 +777,18 @@ public class DragSortListView extends ListView {
             int x = mFloatLoc.x;
 
             int width = getWidth();
-            if (x < 0)
+            if (x < 0) {
                 x = -x;
+            }
             float alphaMod;
             if (x < width) {
-                alphaMod = ((float) (width - x)) / ((float) width);
+                alphaMod = (float)(width - x) / (float)width;
                 alphaMod *= alphaMod;
             } else {
                 alphaMod = 0;
             }
 
-            final int alpha = (int) (255f * mCurrFloatAlpha * alphaMod);
+            final int alpha = (int)(255f * mCurrFloatAlpha * alphaMod);
 
             canvas.save();
             // Log.d("mobeta", "clip rect bounds: " + canvas.getClipBounds());
@@ -851,7 +824,9 @@ public class DragSortListView extends ListView {
     private class HeightCache {
 
         private SparseIntArray mMap;
+
         private ArrayList<Integer> mOrder;
+
         private int mMaxSize;
 
         public HeightCache(int size) {
@@ -873,7 +848,7 @@ public class DragSortListView extends ListView {
                     }
                 } else {
                     // move position to newest slot
-                    mOrder.remove((Integer) position);
+                    mOrder.remove((Integer)position);
                 }
                 mMap.put(position, height);
                 mOrder.add(position);
@@ -892,24 +867,22 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Get the shuffle edge for item at position when top of
-     * item is at y-coord top. Assumes that current item heights
-     * are consistent with current float view location and
-     * thus expanded positions and slide fraction. i.e. Should not be
-     * called between update of expanded positions/slide fraction
-     * and layoutChildren.
-     *
-     * @param position 
+     * Get the shuffle edge for item at position when top of item is at y-coord
+     * top. Assumes that current item heights are consistent with current float
+     * view location and thus expanded positions and slide fraction. i.e. Should
+     * not be called between update of expanded positions/slide fraction and
+     * layoutChildren.
+     * 
+     * @param position
      * @param top
-     * @param height Height of item at position. If -1, this function
-     * calculates this height.
-     *
-     * @return Shuffle line between position-1 and position (for
-     * the given view of the list; that is, for when top of item at
-     * position has y-coord of given `top`). If
-     * floating View (treated as horizontal line) is dropped
-     * immediately above this line, it lands in position-1. If
-     * dropped immediately below this line, it lands in position.
+     * @param height Height of item at position. If -1, this function calculates
+     *            this height.
+     * @return Shuffle line between position-1 and position (for the given view
+     *         of the list; that is, for when top of item at position has
+     *         y-coord of given `top`). If floating View (treated as horizontal
+     *         line) is dropped immediately above this line, it lands in
+     *         position-1. If dropped immediately below this line, it lands in
+     *         position.
      */
     private int getShuffleEdge(int position, int top) {
 
@@ -920,7 +893,7 @@ public class DragSortListView extends ListView {
         // dragged; there are N-1 of them if there are N draggable
         // items.
 
-        if (position <= numHeaders || (position >= getCount() - numFooters)) {
+        if (position <= numHeaders || position >= getCount() - numFooters) {
             return top;
         }
 
@@ -1062,8 +1035,8 @@ public class DragSortListView extends ListView {
             }
             // Log.d("mobeta", "edgeTop="+edgeTop+" edgeBot="+edgeBottom);
 
-            int slideRgnHeight = (int) (0.5f * mSlideRegionFrac * edgeToEdge);
-            float slideRgnHeightF = (float) slideRgnHeight;
+            int slideRgnHeight = (int)(0.5f * mSlideRegionFrac * edgeToEdge);
+            float slideRgnHeightF = slideRgnHeight;
             int slideEdgeTop = edgeTop + slideRgnHeight;
             int slideEdgeBottom = edgeBottom - slideRgnHeight;
 
@@ -1071,7 +1044,7 @@ public class DragSortListView extends ListView {
             if (mFloatViewMid < slideEdgeTop) {
                 mFirstExpPos = itemPos - 1;
                 mSecondExpPos = itemPos;
-                mSlideFrac = 0.5f * ((float) (slideEdgeTop - mFloatViewMid)) / slideRgnHeightF;
+                mSlideFrac = 0.5f * (slideEdgeTop - mFloatViewMid) / slideRgnHeightF;
                 // Log.d("mobeta",
                 // "firstExp="+mFirstExpPos+" secExp="+mSecondExpPos+" slideFrac="+mSlideFrac);
             } else if (mFloatViewMid < slideEdgeBottom) {
@@ -1080,8 +1053,7 @@ public class DragSortListView extends ListView {
             } else {
                 mFirstExpPos = itemPos;
                 mSecondExpPos = itemPos + 1;
-                mSlideFrac = 0.5f * (1.0f + ((float) (edgeBottom - mFloatViewMid))
-                        / slideRgnHeightF);
+                mSlideFrac = 0.5f * (1.0f + (edgeBottom - mFloatViewMid) / slideRgnHeightF);
                 // Log.d("mobeta",
                 // "firstExp="+mFirstExpPos+" secExp="+mSecondExpPos+" slideFrac="+mSlideFrac);
             }
@@ -1134,13 +1106,14 @@ public class DragSortListView extends ListView {
         private float mDurationF;
 
         private float mAlpha;
+
         private float mA, mB, mC, mD;
 
         private boolean mCanceled;
 
         public SmoothAnimator(float smoothness, int duration) {
             mAlpha = smoothness;
-            mDurationF = (float) duration;
+            mDurationF = duration;
             mA = mD = 1f / (2f * mAlpha * (1f - mAlpha));
             mB = mAlpha / (2f * (mAlpha - 1f));
             mC = 1f / (1f - mAlpha);
@@ -1185,7 +1158,7 @@ public class DragSortListView extends ListView {
                 return;
             }
 
-            float fraction = ((float) (SystemClock.uptimeMillis() - mStartTime)) / mDurationF;
+            float fraction = (SystemClock.uptimeMillis() - mStartTime) / mDurationF;
 
             if (fraction >= 1f) {
                 onUpdate(1f, 1f);
@@ -1203,6 +1176,7 @@ public class DragSortListView extends ListView {
     private class LiftAnimator extends SmoothAnimator {
 
         private float mInitDragDeltaY;
+
         private float mFinalDragDeltaY;
 
         public LiftAnimator(float smoothness, int duration) {
@@ -1220,7 +1194,7 @@ public class DragSortListView extends ListView {
             if (mDragState != DRAGGING) {
                 cancel();
             } else {
-                mDragDeltaY = (int) (smoothFrac * mFinalDragDeltaY + (1f - smoothFrac)
+                mDragDeltaY = (int)(smoothFrac * mFinalDragDeltaY + (1f - smoothFrac)
                         * mInitDragDeltaY);
                 mFloatLoc.y = mY - mDragDeltaY;
                 doDragFloatView(true);
@@ -1234,8 +1208,11 @@ public class DragSortListView extends ListView {
     private class DropAnimator extends SmoothAnimator {
 
         private int mDropPos;
+
         private int srcPos;
+
         private float mInitDeltaY;
+
         private float mInitDeltaX;
 
         public DropAnimator(float smoothness, int duration) {
@@ -1282,8 +1259,8 @@ public class DragSortListView extends ListView {
             final float deltaX = mFloatLoc.x - targetX;
             final float f = 1f - smoothFrac;
             if (f < Math.abs(deltaY / mInitDeltaY) || f < Math.abs(deltaX / mInitDeltaX)) {
-                mFloatLoc.y = targetY + (int) (mInitDeltaY * f);
-                mFloatLoc.x = getPaddingLeft() + (int) (mInitDeltaX * f);
+                mFloatLoc.y = targetY + (int)(mInitDeltaY * f);
+                mFloatLoc.x = getPaddingLeft() + (int)(mInitDeltaX * f);
                 doDragFloatView(true);
             }
         }
@@ -1301,14 +1278,19 @@ public class DragSortListView extends ListView {
     private class RemoveAnimator extends SmoothAnimator {
 
         private float mFloatLocX;
+
         private float mFirstStartBlank;
+
         private float mSecondStartBlank;
 
         private int mFirstChildHeight = -1;
+
         private int mSecondChildHeight = -1;
 
         private int mFirstPos;
+
         private int mSecondPos;
+
         private int srcPos;
 
         public RemoveAnimator(float smoothness, int duration) {
@@ -1331,10 +1313,11 @@ public class DragSortListView extends ListView {
                     mRemoveVelocityX = (mFloatLocX < 0 ? -1 : 1) * minVelocity;
                 } else {
                     minVelocity *= 2;
-                    if (mRemoveVelocityX < 0 && mRemoveVelocityX > -minVelocity)
+                    if (mRemoveVelocityX < 0 && mRemoveVelocityX > -minVelocity) {
                         mRemoveVelocityX = -minVelocity;
-                    else if (mRemoveVelocityX > 0 && mRemoveVelocityX < minVelocity)
+                    } else if (mRemoveVelocityX > 0 && mRemoveVelocityX < minVelocity) {
                         mRemoveVelocityX = minVelocity;
+                    }
                 }
             } else {
                 destroyFloatView();
@@ -1351,14 +1334,15 @@ public class DragSortListView extends ListView {
             int blank;
 
             if (mUseRemoveVelocity) {
-                float dt = (float) (SystemClock.uptimeMillis() - mStartTime) / 1000;
-                if (dt == 0)
+                float dt = (float)(SystemClock.uptimeMillis() - mStartTime) / 1000;
+                if (dt == 0) {
                     return;
+                }
                 float dx = mRemoveVelocityX * dt;
                 int w = getWidth();
                 mRemoveVelocityX += (mRemoveVelocityX > 0 ? 1 : -1) * dt * w;
                 mFloatLocX += dx;
-                mFloatLoc.x = (int) mFloatLocX;
+                mFloatLoc.x = (int)mFloatLocX;
                 if (mFloatLocX < w && mFloatLocX > -w) {
                     mStartTime = SystemClock.uptimeMillis();
                     doDragFloatView(true);
@@ -1369,9 +1353,9 @@ public class DragSortListView extends ListView {
             if (item != null) {
                 if (mFirstChildHeight == -1) {
                     mFirstChildHeight = getChildHeight(mFirstPos, item, false);
-                    mFirstStartBlank = (float) (item.getHeight() - mFirstChildHeight);
+                    mFirstStartBlank = item.getHeight() - mFirstChildHeight;
                 }
-                blank = Math.max((int) (f * mFirstStartBlank), 1);
+                blank = Math.max((int)(f * mFirstStartBlank), 1);
                 lp = item.getLayoutParams();
                 lp.height = mFirstChildHeight + blank;
                 item.setLayoutParams(lp);
@@ -1381,9 +1365,9 @@ public class DragSortListView extends ListView {
                 if (item != null) {
                     if (mSecondChildHeight == -1) {
                         mSecondChildHeight = getChildHeight(mSecondPos, item, false);
-                        mSecondStartBlank = (float) (item.getHeight() - mSecondChildHeight);
+                        mSecondStartBlank = item.getHeight() - mSecondChildHeight;
                     }
-                    blank = Math.max((int) (f * mSecondStartBlank), 1);
+                    blank = Math.max((int)(f * mSecondStartBlank), 1);
                     lp = item.getLayoutParams();
                     lp.height = mSecondChildHeight + blank;
                     item.setLayoutParams(lp);
@@ -1405,10 +1389,10 @@ public class DragSortListView extends ListView {
 
     /**
      * Removes an item from the list and animates the removal.
-     *
-     * @param which Position to remove (NOTE: headers/footers ignored!
-     * this is a position in your input ListAdapter).
-     * @param velocityX 
+     * 
+     * @param which Position to remove (NOTE: headers/footers ignored! this is a
+     *            position in your input ListAdapter).
+     * @param velocityX
      */
     public void removeItem(int which, float velocityX) {
         if (mDragState == IDLE || mDragState == DRAGGING) {
@@ -1448,13 +1432,13 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Move an item, bypassing the drag-sort process. Simply calls
-     * through to {@link DropListener#drop(int, int)}.
+     * Move an item, bypassing the drag-sort process. Simply calls through to
+     * {@link DropListener#drop(int, int)}.
      * 
-     * @param from Position to move (NOTE: headers/footers ignored!
-     * this is a position in your input ListAdapter).
-     * @param to Target position (NOTE: headers/footers ignored!
-     * this is a position in your input ListAdapter).
+     * @param from Position to move (NOTE: headers/footers ignored! this is a
+     *            position in your input ListAdapter).
+     * @param to Target position (NOTE: headers/footers ignored! this is a
+     *            position in your input ListAdapter).
      */
     public void moveItem(int from, int to) {
         if (mDropListener != null) {
@@ -1562,15 +1546,14 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Stop a drag in progress. Pass <code>true</code> if you would
-     * like to remove the dragged item from the list.
-     *
-     * @param remove Remove the dragged item from the list. Calls
-     * a registered RemoveListener, if one exists. Otherwise, calls
-     * the DropListener, if one exists.
-     *
-     * @return True if the stop was successful. False if there is
-     * no floating View.
+     * Stop a drag in progress. Pass <code>true</code> if you would like to
+     * remove the dragged item from the list.
+     * 
+     * @param remove Remove the dragged item from the list. Calls a registered
+     *            RemoveListener, if one exists. Otherwise, calls the
+     *            DropListener, if one exists.
+     * @return True if the stop was successful. False if there is no floating
+     *         View.
      */
     public boolean stopDrag(boolean remove) {
         mUseRemoveVelocity = false;
@@ -1677,14 +1660,14 @@ public class DragSortListView extends ListView {
             mLastX = mX;
             mLastY = mY;
         }
-        mX = (int) ev.getX();
-        mY = (int) ev.getY();
+        mX = (int)ev.getX();
+        mY = (int)ev.getY();
         if (action == MotionEvent.ACTION_DOWN) {
             mLastX = mX;
             mLastY = mY;
         }
-        mOffsetX = (int) ev.getRawX() - mX;
-        mOffsetY = (int) ev.getRawY() - mY;
+        mOffsetX = (int)ev.getRawX() - mX;
+        mOffsetY = (int)ev.getRawY() - mY;
     }
 
     public boolean listViewIntercepted() {
@@ -1747,26 +1730,23 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Set the width of each drag scroll region by specifying
-     * a fraction of the ListView height.
-     *
-     * @param heightFraction Fraction of ListView height. Capped at
-     * 0.5f.
+     * Set the width of each drag scroll region by specifying a fraction of the
+     * ListView height.
      * 
+     * @param heightFraction Fraction of ListView height. Capped at 0.5f.
      */
     public void setDragScrollStart(float heightFraction) {
         setDragScrollStarts(heightFraction, heightFraction);
     }
 
     /**
-     * Set the width of each drag scroll region by specifying
-     * a fraction of the ListView height.
-     *
-     * @param upperFrac Fraction of ListView height for up-scroll bound.
-     * Capped at 0.5f.
-     * @param lowerFrac Fraction of ListView height for down-scroll bound.
-     * Capped at 0.5f.
+     * Set the width of each drag scroll region by specifying a fraction of the
+     * ListView height.
      * 
+     * @param upperFrac Fraction of ListView height for up-scroll bound. Capped
+     *            at 0.5f.
+     * @param lowerFrac Fraction of ListView height for down-scroll bound.
+     *            Capped at 0.5f.
      */
     public void setDragScrollStarts(float upperFrac, float lowerFrac) {
         if (lowerFrac > 0.5f) {
@@ -1822,8 +1802,7 @@ public class DragSortListView extends ListView {
 
             // start scrolling up
             mDragScroller.startScrolling(DragScroller.UP);
-        }
-        else if (maxY >= mUpScrollStartY && minY <= mDownScrollStartY
+        } else if (maxY >= mUpScrollStartY && minY <= mDownScrollStartY
                 && mDragScroller.isScrolling()) {
             // not in the upper nor in the lower drag-scroll regions but it is
             // still scrolling
@@ -1835,13 +1814,13 @@ public class DragSortListView extends ListView {
     private void updateScrollStarts() {
         final int padTop = getPaddingTop();
         final int listHeight = getHeight() - padTop - getPaddingBottom();
-        float heightF = (float) listHeight;
+        float heightF = listHeight;
 
         mUpScrollStartYF = padTop + mDragUpScrollStartFrac * heightF;
         mDownScrollStartYF = padTop + (1.0f - mDragDownScrollStartFrac) * heightF;
 
-        mUpScrollStartY = (int) mUpScrollStartYF;
-        mDownScrollStartY = (int) mDownScrollStartYF;
+        mUpScrollStartY = (int)mUpScrollStartYF;
+        mDownScrollStartY = (int)mDownScrollStartYF;
 
         mDragUpScrollHeight = mUpScrollStartYF - padTop;
         mDragDownScrollHeight = padTop + listHeight - mDownScrollStartYF;
@@ -1877,8 +1856,7 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Sets layout param height, gravity, and visibility  on
-     * wrapped item.
+     * Sets layout param height, gravity, and visibility on wrapped item.
      */
     private void adjustItem(int position, View v, boolean invalidChildHeight) {
 
@@ -1899,9 +1877,9 @@ public class DragSortListView extends ListView {
         // Adjust item gravity
         if (position == mFirstExpPos || position == mSecondExpPos) {
             if (position < mSrcPos) {
-                ((DragSortItemView) v).setGravity(Gravity.BOTTOM);
+                ((DragSortItemView)v).setGravity(Gravity.BOTTOM);
             } else if (position > mSrcPos) {
-                ((DragSortItemView) v).setGravity(Gravity.TOP);
+                ((DragSortItemView)v).setGravity(Gravity.TOP);
             }
         }
 
@@ -1979,7 +1957,7 @@ public class DragSortListView extends ListView {
         if (position < getHeaderViewsCount() || position >= getCount() - getFooterViewsCount()) {
             child = item;
         } else {
-            child = ((ViewGroup) item).getChildAt(0);
+            child = ((ViewGroup)item).getChildAt(0);
         }
 
         ViewGroup.LayoutParams lp = child.getLayoutParams();
@@ -2010,7 +1988,7 @@ public class DragSortListView extends ListView {
 
         boolean isSliding = mAnimate && mFirstExpPos != mSecondExpPos;
         int maxNonSrcBlankHeight = mFloatViewHeight - mItemHeightCollapsed;
-        int slideHeight = (int) (mSlideFrac * maxNonSrcBlankHeight);
+        int slideHeight = (int)(mSlideFrac * maxNonSrcBlankHeight);
 
         int height;
 
@@ -2096,7 +2074,8 @@ public class DragSortListView extends ListView {
     private void measureItem(View item) {
         ViewGroup.LayoutParams lp = item.getLayoutParams();
         if (lp == null) {
-            lp = new AbsListView.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp = new AbsListView.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
             item.setLayoutParams(lp);
         }
         int wspec = ViewGroup.getChildMeasureSpec(mWidthMeasureSpec, getListPaddingLeft()
@@ -2166,7 +2145,7 @@ public class DragSortListView extends ListView {
                 doActionUpOrCancel();
                 break;
             case MotionEvent.ACTION_MOVE:
-                continueDrag((int) ev.getX(), (int) ev.getY());
+                continueDrag((int)ev.getX(), (int)ev.getY());
                 break;
         }
 
@@ -2180,27 +2159,24 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Start a drag of item at <code>position</code> using the
-     * registered FloatViewManager. Calls through
-     * to {@link #startDrag(int,View,int,int,int)} after obtaining
-     * the floating View from the FloatViewManager.
-     *
+     * Start a drag of item at <code>position</code> using the registered
+     * FloatViewManager. Calls through to
+     * {@link #startDrag(int,View,int,int,int)} after obtaining the floating
+     * View from the FloatViewManager.
+     * 
      * @param position Item to drag.
-     * @param dragFlags Flags that restrict some movements of the
-     * floating View. For example, set <code>dragFlags |= 
-     * ~{@link #DRAG_NEG_X}</code> to allow dragging the floating
-     * View in all directions except off the screen to the left.
-     * @param deltaX Offset in x of the touch coordinate from the
-     * left edge of the floating View (i.e. touch-x minus float View
-     * left).
-     * @param deltaY Offset in y of the touch coordinate from the
-     * top edge of the floating View (i.e. touch-y minus float View
-     * top).
-     *
+     * @param dragFlags Flags that restrict some movements of the floating View.
+     *            For example, set <code>dragFlags |= 
+     * ~{@link #DRAG_NEG_X}</code> to allow dragging the floating View in all
+     *            directions except off the screen to the left.
+     * @param deltaX Offset in x of the touch coordinate from the left edge of
+     *            the floating View (i.e. touch-x minus float View left).
+     * @param deltaY Offset in y of the touch coordinate from the top edge of
+     *            the floating View (i.e. touch-y minus float View top).
      * @return True if the drag was started, false otherwise. This
-     * <code>startDrag</code> will fail if we are not currently in
-     * a touch event, there is no registered FloatViewManager,
-     * or the FloatViewManager returns a null View.
+     *         <code>startDrag</code> will fail if we are not currently in a
+     *         touch event, there is no registered FloatViewManager, or the
+     *         FloatViewManager returns a null View.
      */
     public boolean startDrag(int position, int dragFlags, int deltaX, int deltaY) {
         if (!mInTouchEvent || mFloatViewManager == null) {
@@ -2218,26 +2194,23 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Start a drag of item at <code>position</code> without using
-     * a FloatViewManager.
-     *
+     * Start a drag of item at <code>position</code> without using a
+     * FloatViewManager.
+     * 
      * @param position Item to drag.
      * @param floatView Floating View.
-     * @param dragFlags Flags that restrict some movements of the
-     * floating View. For example, set <code>dragFlags |= 
-     * ~{@link #DRAG_NEG_X}</code> to allow dragging the floating
-     * View in all directions except off the screen to the left.
-     * @param deltaX Offset in x of the touch coordinate from the
-     * left edge of the floating View (i.e. touch-x minus float View
-     * left).
-     * @param deltaY Offset in y of the touch coordinate from the
-     * top edge of the floating View (i.e. touch-y minus float View
-     * top).
-     *
+     * @param dragFlags Flags that restrict some movements of the floating View.
+     *            For example, set <code>dragFlags |= 
+     * ~{@link #DRAG_NEG_X}</code> to allow dragging the floating View in all
+     *            directions except off the screen to the left.
+     * @param deltaX Offset in x of the touch coordinate from the left edge of
+     *            the floating View (i.e. touch-x minus float View left).
+     * @param deltaY Offset in y of the touch coordinate from the top edge of
+     *            the floating View (i.e. touch-y minus float View top).
      * @return True if the drag was started, false otherwise. This
-     * <code>startDrag</code> will fail if we are not currently in
-     * a touch event, <code>floatView</code> is null, or there is
-     * a drag in progress.
+     *         <code>startDrag</code> will fail if we are not currently in a
+     *         touch event, <code>floatView</code> is null, or there is a drag
+     *         in progress.
      */
     public boolean startDrag(int position, View floatView, int dragFlags, int deltaX, int deltaY) {
         if (mDragState != IDLE || !mInTouchEvent || mFloatView != null || floatView == null
@@ -2340,8 +2313,8 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Sets float View location based on suggested values and
-     * constraints set in mDragFlags.
+     * Sets float View location based on suggested values and constraints set in
+     * mDragFlags.
      */
     private void updateFloatView() {
 
@@ -2416,54 +2389,51 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Interface for customization of the floating View appearance
-     * and dragging behavior. Implement
-     * your own and pass it to {@link #setFloatViewManager}. If
-     * your own is not passed, the default {@link SimpleFloatViewManager}
+     * Interface for customization of the floating View appearance and dragging
+     * behavior. Implement your own and pass it to {@link #setFloatViewManager}.
+     * If your own is not passed, the default {@link SimpleFloatViewManager}
      * implementation is used.
      */
     public interface FloatViewManager {
         /**
          * Return the floating View for item at <code>position</code>.
-         * DragSortListView will measure and layout this View for you,
-         * so feel free to just inflate it. You can help DSLV by
-         * setting some {@link ViewGroup.LayoutParams} on this View;
-         * otherwise it will set some for you (with a width of FILL_PARENT
-         * and a height of WRAP_CONTENT).
-         *
-         * @param position Position of item to drag (NOTE:
-         * <code>position</code> excludes header Views; thus, if you
-         * want to call {@link ListView#getChildAt(int)}, you will need
-         * to add {@link ListView#getHeaderViewsCount()} to the index).
-         *
+         * DragSortListView will measure and layout this View for you, so feel
+         * free to just inflate it. You can help DSLV by setting some
+         * {@link ViewGroup.LayoutParams} on this View; otherwise it will set
+         * some for you (with a width of FILL_PARENT and a height of
+         * WRAP_CONTENT).
+         * 
+         * @param position Position of item to drag (NOTE: <code>position</code>
+         *            excludes header Views; thus, if you want to call
+         *            {@link ListView#getChildAt(int)}, you will need to add
+         *            {@link ListView#getHeaderViewsCount()} to the index).
          * @return The View you wish to display as the floating View.
          */
         public View onCreateFloatView(int position);
 
         /**
-         * Called whenever the floating View is dragged. Float View
-         * properties can be changed here. Also, the upcoming location
-         * of the float View can be altered by setting
-         * <code>location.x</code> and <code>location.y</code>.
-         *
+         * Called whenever the floating View is dragged. Float View properties
+         * can be changed here. Also, the upcoming location of the float View
+         * can be altered by setting <code>location.x</code> and
+         * <code>location.y</code>.
+         * 
          * @param floatView The floating View.
-         * @param location The location (top-left; relative to DSLV
-         * top-left) at which the float
-         * View would like to appear, given the current touch location
-         * and the offset provided in {@link DragSortListView#startDrag}.
-         * @param touch The current touch location (relative to DSLV
-         * top-left).
-         * @param pendingScroll 
+         * @param location The location (top-left; relative to DSLV top-left) at
+         *            which the float View would like to appear, given the
+         *            current touch location and the offset provided in
+         *            {@link DragSortListView#startDrag}.
+         * @param touch The current touch location (relative to DSLV top-left).
+         * @param pendingScroll
          */
         public void onDragFloatView(View floatView, Point location, Point touch);
 
         /**
-         * Called when the float View is dropped; lets you perform
-         * any necessary cleanup. The internal DSLV floating View
-         * reference is set to null immediately after this is called.
-         *
+         * Called when the float View is dropped; lets you perform any necessary
+         * cleanup. The internal DSLV floating View reference is set to null
+         * immediately after this is called.
+         * 
          * @param floatView The floating View passed to
-         * {@link #onCreateFloatView(int)}.
+         *            {@link #onCreateFloatView(int)}.
          */
         public void onDestroyFloatView(View floatView);
     }
@@ -2477,14 +2447,12 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Allows for easy toggling between a DragSortListView
-     * and a regular old ListView. If enabled, items are
-     * draggable, where the drag init mode determines how
-     * items are lifted (see {@link setDragInitMode(int)}).
-     * If disabled, items cannot be dragged.
-     *
-     * @param enabled Set <code>true</code> to enable list
-     * item dragging
+     * Allows for easy toggling between a DragSortListView and a regular old
+     * ListView. If enabled, items are draggable, where the drag init mode
+     * determines how items are lifted (see {@link setDragInitMode(int)}). If
+     * disabled, items cannot be dragged.
+     * 
+     * @param enabled Set <code>true</code> to enable list item dragging
      */
     public void setDragEnabled(boolean enabled) {
         mDragEnabled = enabled;
@@ -2511,12 +2479,11 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Probably a no-brainer, but make sure that your remove listener
-     * calls {@link BaseAdapter#notifyDataSetChanged()} or something like it.
-     * When an item removal occurs, DragSortListView
-     * relies on a redraw of all the items to recover invisible views
-     * and such. Strictly speaking, if you remove something, your dataset
-     * has changed...
+     * Probably a no-brainer, but make sure that your remove listener calls
+     * {@link BaseAdapter#notifyDataSetChanged()} or something like it. When an
+     * item removal occurs, DragSortListView relies on a redraw of all the items
+     * to recover invisible views and such. Strictly speaking, if you remove
+     * something, your dataset has changed...
      * 
      * @param l
      */
@@ -2529,25 +2496,21 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Your implementation of this has to reorder your ListAdapter! 
-     * Make sure to call
-     * {@link BaseAdapter#notifyDataSetChanged()} or something like it
-     * in your implementation.
+     * Your implementation of this has to reorder your ListAdapter! Make sure to
+     * call {@link BaseAdapter#notifyDataSetChanged()} or something like it in
+     * your implementation.
      * 
      * @author heycosmo
-     *
      */
     public interface DropListener {
         public void drop(int from, int to);
     }
 
     /**
-     * Make sure to call
-     * {@link BaseAdapter#notifyDataSetChanged()} or something like it
-     * in your implementation.
+     * Make sure to call {@link BaseAdapter#notifyDataSetChanged()} or something
+     * like it in your implementation.
      * 
      * @author heycosmo
-     *
      */
     public interface RemoveListener {
         public void remove(int which);
@@ -2563,8 +2526,8 @@ public class DragSortListView extends ListView {
     }
 
     /**
-     * Completely custom scroll speed profile. Default increases linearly
-     * with position and is constant in time. Create your own by implementing
+     * Completely custom scroll speed profile. Default increases linearly with
+     * position and is constant in time. Create your own by implementing
      * {@link DragSortListView.DragScrollProfile}.
      * 
      * @param ssp
@@ -2640,7 +2603,7 @@ public class DragSortListView extends ListView {
         int[] runStart = new int[cip.size()];
         int[] runEnd = new int[cip.size()];
         int runCount = buildRunList(cip, rangeStart, rangeEnd, runStart, runEnd);
-        if (runCount == 1 && (runStart[0] == runEnd[0])) {
+        if (runCount == 1 && runStart[0] == runEnd[0]) {
             // Special case where all items are checked, we can never set any
             // item to false like we do below.
             return;
@@ -2667,24 +2630,24 @@ public class DragSortListView extends ListView {
      * underlying adapter which does not have stable IDs (see
      * {@link ListAdapter#hasStableIds()}). This is because without IDs, the
      * ListView has no way of knowing which items have moved where, and cannot
-     * update the check state accordingly.
-     * 
-     * See also further comments on {@link #moveCheckState(int, int)}.
+     * update the check state accordingly. See also further comments on
+     * {@link #moveCheckState(int, int)}.
      * 
      * @param position
      */
     public void removeCheckState(int position) {
         SparseBooleanArray cip = getCheckedItemPositions();
 
-        if (cip.size() == 0)
+        if (cip.size() == 0) {
             return;
+        }
         int[] runStart = new int[cip.size()];
         int[] runEnd = new int[cip.size()];
         int rangeStart = position;
         int rangeEnd = cip.keyAt(cip.size() - 1) + 1;
         int runCount = buildRunList(cip, rangeStart, rangeEnd, runStart, runEnd);
         for (int i = 0; i != runCount; i++) {
-            if (!(runStart[i] == position || (runEnd[i] < runStart[i] && runEnd[i] > position))) {
+            if (!(runStart[i] == position || runEnd[i] < runStart[i] && runEnd[i] > position)) {
                 // Only set a new check mark in front of this run if it does
                 // not contain the deleted position. If it does, we only need
                 // to make it one check mark shorter at the end.
@@ -2694,20 +2657,22 @@ public class DragSortListView extends ListView {
         }
     }
 
-    private static int buildRunList(SparseBooleanArray cip, int rangeStart,
-            int rangeEnd, int[] runStart, int[] runEnd) {
+    private static int buildRunList(SparseBooleanArray cip, int rangeStart, int rangeEnd,
+            int[] runStart, int[] runEnd) {
         int runCount = 0;
 
         int i = findFirstSetIndex(cip, rangeStart, rangeEnd);
-        if (i == -1)
+        if (i == -1) {
             return 0;
+        }
 
         int position = cip.keyAt(i);
         int currentRunStart = position;
         int currentRunEnd = currentRunStart + 1;
         for (i++; i < cip.size() && (position = cip.keyAt(i)) < rangeEnd; i++) {
-            if (!cip.valueAt(i)) // not checked => not interesting
+            if (!cip.valueAt(i)) {
                 continue;
+            }
             if (position == currentRunEnd) {
                 currentRunEnd++;
             } else {
@@ -2758,10 +2723,12 @@ public class DragSortListView extends ListView {
     private static int findFirstSetIndex(SparseBooleanArray sba, int rangeStart, int rangeEnd) {
         int size = sba.size();
         int i = insertionIndexForKey(sba, rangeStart);
-        while (i < size && sba.keyAt(i) < rangeEnd && !sba.valueAt(i))
+        while (i < size && sba.keyAt(i) < rangeEnd && !sba.valueAt(i)) {
             i++;
-        if (i == size || sba.keyAt(i) >= rangeEnd)
+        }
+        if (i == size || sba.keyAt(i) >= rangeEnd) {
             return -1;
+        }
         return i;
     }
 
@@ -2769,33 +2736,33 @@ public class DragSortListView extends ListView {
         int low = 0;
         int high = sba.size();
         while (high - low > 0) {
-            int middle = (low + high) >> 1;
-            if (sba.keyAt(middle) < key)
+            int middle = low + high >> 1;
+            if (sba.keyAt(middle) < key) {
                 low = middle + 1;
-            else
+            } else {
                 high = middle;
+            }
         }
         return low;
     }
 
     /**
-     * Interface for controlling
-     * scroll speed as a function of touch position and time. Use
-     * {@link DragSortListView#setDragScrollProfile(DragScrollProfile)} to
-     * set custom profile.
+     * Interface for controlling scroll speed as a function of touch position
+     * and time. Use
+     * {@link DragSortListView#setDragScrollProfile(DragScrollProfile)} to set
+     * custom profile.
      * 
      * @author heycosmo
-     *
      */
     public interface DragScrollProfile {
         /**
-         * Return a scroll speed in pixels/millisecond. Always return a
-         * positive number.
+         * Return a scroll speed in pixels/millisecond. Always return a positive
+         * number.
          * 
          * @param w Normalized position in scroll region (i.e. w \in [0,1]).
-         * Small w typically means slow scrolling.
+         *            Small w typically means slow scrolling.
          * @param t Time (in milliseconds) since start of scroll (handy if you
-         * want scroll acceleration).
+         *            want scroll acceleration).
          * @return Scroll speed at position w and time t in pixels/ms.
          */
         float getSpeed(float w, long t);
@@ -2806,15 +2773,21 @@ public class DragSortListView extends ListView {
         private boolean mAbort;
 
         private long mPrevTime;
+
         private long mCurrTime;
 
         private int dy;
+
         private float dt;
+
         private long tStart;
+
         private int scrollDir;
 
         public final static int STOP = -1;
+
         public final static int UP = 0;
+
         public final static int DOWN = 1;
 
         private float mScrollSpeed; // pixels per ms
@@ -2822,6 +2795,7 @@ public class DragSortListView extends ListView {
         private boolean mScrolling = false;
 
         private int mLastHeader;
+
         private int mFirstFooter;
 
         public boolean isScrolling() {
@@ -2906,13 +2880,13 @@ public class DragSortListView extends ListView {
             }
 
             mCurrTime = SystemClock.uptimeMillis();
-            dt = (float) (mCurrTime - mPrevTime);
+            dt = mCurrTime - mPrevTime;
 
             // dy is change in View position of a list item; i.e. positive dy
             // means user is scrolling up (list item moves down the screen,
             // remember
             // y=0 is at top of View).
-            dy = (int) Math.round(mScrollSpeed * dt);
+            dy = Math.round(mScrollSpeed * dt);
 
             int movePos;
             if (dy >= 0) {
@@ -2955,6 +2929,7 @@ public class DragSortListView extends ListView {
         File mFile;
 
         private int mNumInBuffer = 0;
+
         private int mNumFlushes = 0;
 
         private boolean mTracking = false;
